@@ -10,26 +10,20 @@
 # Create a shopping list generator that identifies additional ingredients needed for the selected recipes
 
 import csv
-import ingredient_class
 
-#print("foo")
+# Global list to store ingredients
+ingredients = []
 
-#ingredients = []
+def read_ingredients(file_path):
+    global ingredients
+    with open(file_path, mode='r', newline='') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            ingredients.append({
+                'name': row['name'],
+                'quantity': int(row['quantity']),
+                'unit': row['unit']
+            })
 
-#if(open("ingredients.csv", 'r')):
-#    print("Exists")
-
-#def readIngredients():
-#    with open('ingredients.csv', 'r') as file:
-#        reader = csv.reader(file)
-#        for row in reader:
-#            print("a")
-#            ingredient = ingredient(
-#                name=row['name'],
-#                quantity=float(row['quantity']),
-#                unit=row['unit']py
-#            )
-#            ingredients.append(ingredient)
-
-#for ingredient in ingredients:
-#    ingredient.print()
+read_ingredients('ingredients.csv')
+print(ingredients)
