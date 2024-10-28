@@ -1,0 +1,11 @@
+{
+    "user_preferences": {
+        "diet": "vegetarian",
+        "nutritional_goals": {
+            "calories": 2000,
+            "protein": 50,
+            "carbs": 250,
+            "fat": 65
+        }
+    }
+}
