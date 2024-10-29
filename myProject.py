@@ -58,3 +58,19 @@ print_ingredients()
 print_recipies()
 
 print("pref:", preferences)
+
+
+# this function creates meal_plan.txt
+def create_meal_plan(recipies, preferences):
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    # return meal_plan
+
+# this function creates shopping_list.txt
+def generate_shopping_list(recipes, ingredients):
+    pass
+    # return shopping_list
+
+# we might want something like this
+def analyze_nutrition(meal_plan, recipes, preferences, recipe_nutrition):
+    pass
+    # return nutrition_summary
