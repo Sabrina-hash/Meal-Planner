@@ -38,6 +38,11 @@ def read_recipies(file_path):
     global recipies
     with open(file_path, mode='r') as file:
         recipies = json.load(file)
+    if(preferences.get('diet') == "vegetarian"):
+        print("Filtering out non-vegetarian dishes...")
+        for recipe in list(recipies.keys()):                    # going through a list of keys
+            if recipies[recipe].get('diet') != "vegetarian":
+                recipies.pop(recipe)
 
 def print_ingredients():
     print("\nINGREDIENTS:")
