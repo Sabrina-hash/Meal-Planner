@@ -1,0 +1,277 @@
+{
+    "Chicken Salad": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 150,
+            "lettuce": 50
+        },
+        "nutrition": {
+            "calories": 250,
+            "protein": 30,
+            "carbs": 5,
+            "fat": 10
+        }
+    },
+    "Pasta": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "pasta": 100,
+            "tomato": 50
+        },
+        "nutrition": {
+            "calories": 300,
+            "protein": 10,
+            "carbs": 60,
+            "fat": 5
+        }
+    },
+    "Fruit Smoothie": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 1,
+            "milk": 200
+        },
+        "nutrition": {
+            "calories": 200,
+            "protein": 8,
+            "carbs": 35,
+            "fat": 5
+        }
+    },
+    "Vegetable Stir Fry": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "spinach": 200,
+            "carrots": 150,
+            "olive oil": 10
+        },
+        "nutrition": {
+            "calories": 250,
+            "protein": 5,
+            "carbs": 20,
+            "fat": 20
+        }
+    },
+    "Cheesy Pasta Bake": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "pasta": 300,
+            "cheese": 200,
+            "tomato": 400
+        },
+        "nutrition": {
+            "calories": 500,
+            "protein": 25,
+            "carbs": 60,
+            "fat": 15
+        }
+    },
+    "Banana Yogurt Parfait": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 3,
+            "yogurt": 400,
+            "oats": 50
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 15,
+            "carbs": 60,
+            "fat": 5
+        }
+    },
+    "Egg Fried Rice": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "rice": 400,
+            "eggs": 3,
+            "peas": 100
+        },
+        "nutrition": {
+            "calories": 600,
+            "protein": 20,
+            "carbs": 80,
+            "fat": 15
+        }
+    },
+    "Tomato Basil Soup": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "tomato": 600,
+            "basil": 100,
+            "olive oil": 10
+        },
+        "nutrition": {
+            "calories": 200,
+            "protein": 5,
+            "carbs": 40,
+            "fat": 10
+        }
+    },
+    "Chicken Stir Fry": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 300,
+            "mixed vegetables": 200
+        },
+        "nutrition": {
+            "calories": 400,
+            "protein": 35,
+            "carbs": 30,
+            "fat": 10
+        }
+    },
+    "Fruit Salad": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 2,
+            "yogurt": 200,
+            "mixed berries": 150
+        },
+        "nutrition": {
+            "calories": 250,
+            "protein": 8,
+            "carbs": 40,
+            "fat": 5
+        }
+    },
+    "Lettuce Wraps": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "lettuce": 200,
+            "chicken": 150,
+            "cheese": 100
+        },
+        "nutrition": {
+            "calories": 300,
+            "protein": 25,
+            "carbs": 10,
+            "fat": 15
+        }
+    },
+    "Oven-Baked Chicken": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 400,
+            "olive oil": 50,
+            "carrots": 200
+        },
+        "nutrition": {
+            "calories": 500,
+            "protein": 40,
+            "carbs": 30,
+            "fat": 20
+        }
+    },
+    "Pasta Primavera": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "pasta": 250,
+            "mixed vegetables": 200,
+            "olive oil": 10
+        },
+        "nutrition": {
+            "calories": 450,
+            "protein": 15,
+            "carbs": 75,
+            "fat": 15
+        }
+    },
+    "Creamy Spinach and Cheese Bake": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "spinach": 200,
+            "cheese": 200,
+            "olive oil": 50
+        },
+        "nutrition": {
+            "calories": 400,
+            "protein": 25,
+            "carbs": 5,
+            "fat": 30
+        }
+    },
+    "Banana Oatmeal": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 2,
+            "oats": 100,
+            "milk": 500
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 10,
+            "carbs": 60,
+            "fat": 5
+        }
+    },
+    "Carrot and Chicken Soup": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 300,
+            "carrots": 200,
+            "water": 500
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 30,
+            "carbs": 20,
+            "fat": 10
+        }
+    },
+    "Vegetable Rice Bowl": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "rice": 200,
+            "spinach": 150,
+            "olive oil": 100
+        },
+        "nutrition": {
+            "calories": 450,
+            "protein": 10,
+            "carbs": 70,
+            "fat": 15
+        }
+    },
+    "Stuffed Lettuce Wraps": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "lettuce": 200,
+            "rice": 250,
+            "cheese": 100
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 15,
+            "carbs": 50,
+            "fat": 10
+        }
+    },
+    "Banana Milkshake": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 3,
+            "milk": 500
+        },
+        "nutrition": {
+            "calories": 450,
+            "protein": 15,
+            "carbs": 80,
+            "fat": 5
+        }
+    },
+    "Egg and Spinach Breakfast Bowl": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "eggs": 3,
+            "spinach": 100,
+            "olive oil": 50
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 25,
+            "carbs": 5,
+            "fat": 30
+        }
+    }
+}    
