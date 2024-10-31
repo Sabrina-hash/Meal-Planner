@@ -58,7 +58,7 @@ def print_recipies():
 
 read_ingredients('ingredients.csv')
 read_preferences('preferences.json')
-read_recipies('recipies.json')
+read_recipies('recipes.json')
 print_ingredients()
 print_recipies()
 
