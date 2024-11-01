@@ -2,7 +2,7 @@ name,quantity,unit
 chicken,500,grams
 lettuce,1,head
 banana,6,units
-Milk,1000,ml
+milk,1000,ml
 pasta,500,grams
 tomato,8,units
 olive oil,500,ml
@@ -13,3 +13,19 @@ rice,1000,grams
 eggs,12,units
 carrots,500,grams
 beans,400,grams
+quinoa,500,grams
+chickpeas,400,grams
+avocado,5,units
+lemon,3,units
+bell pepper,5,units
+nutritional yeast,100,grams
+sweet potato,500,grams
+mixed berries,200,grams
+cucumber,3,units
+garlic,5,cloves
+sushi rice,500,grams
+nori,10,sheets
+almond milk,1000,ml
+chia seeds,100,grams
+broccoli,300,grams
+ground beef,500,grams
