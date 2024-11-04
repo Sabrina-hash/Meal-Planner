@@ -67,6 +67,7 @@ print_recipes()
 print("pref:", preferences)
 """
 
+"""
 # this function creates meal_plan.txt
 def create_meal_plan(recipes, preferences):
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -81,6 +82,7 @@ def generate_shopping_list(recipes, ingredients):
 def analyze_nutrition(meal_plan, recipes, preferences, recipe_nutrition):
     pass
     # return nutrition_summary
+"""
 
 # this function takes recipe info and returns the i value!
 def getImportance(nutrition):
@@ -97,10 +99,10 @@ def getImportance(nutrition):
     i = round(i/n, 4)
     return i
 
+# this function prints the importance score of all recipes available
 def recipes_information():
     for recipe_name, recipe_info in recipes.items():
         print(f"{recipe_name}.")
-    #    print(f"RECIPE INFO: {recipe_info}.")
         nutrition = recipe_info.get('nutrition', {})
         for nutrient, value in nutrition.items():
             print(f"   {nutrient}: {value}.")
@@ -108,46 +110,62 @@ def recipes_information():
     for nutrition, value in preferences.items():
         print(f"{nutrition} wanted: {value}")
 
-print(f"CALORIES: {preferences.get('calories')}")
+# this is an example of how to access nutrition items
+# print(f"CALORIES: {preferences.get('calories')}")
 
+
+
+# Find the best dish available from recipes, adds it to the meal_plan list, and removes the recipe from the recipe list
 def find_best():
-    best = [0, "none"]      # i score, name
+    best = [0, None]      # i score, name
     for recipe_name, recipe_info in recipes.items():
         nutrition = recipe_info.get('nutrition', {})
         i = getImportance(nutrition)
         if i > best[0]:
             best[0] = i
             best[1] = recipe_name
-    print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
-    # remove best dish from recipes
-    # add best dish to meal_plan
-    # instead of subtracting from goal, we should add towards our progress
-    the_recipe = recipes.pop(best[1])
-    meal_plan.update({best[1]: the_recipe})
-#    for nutrient, value in the_recipe['nutrition'].items():
-#        if nutrient in preferences:
-#            preferences[nutrient] -= value
+    if best[1] is not None:     # failsafe in the event that recipes.json has less than 7 available recipes
+        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
+        the_recipe = recipes.pop(best[1])
+        meal_plan.update({best[1]: the_recipe})
 
 for i in range (7):
     find_best()
+    pass
 
-
+# this function returns the score of the current meal plan. Unfinished
 def meal_score():
     score = 0
     n = len(meal_plan)
-    for nutrient, value in preferences.items():
-        pass
-    for nutrient, value in meal_plan.values().get('nutrition').items():       # for each nutrient
-        pass
-        
+    total_nutrients = {}        # stores total 
+    for name, item in meal_plan.items():
+        for nutrient, value in item.get('nutrition').items():
+            if nutrient not in total_nutrients.keys():
+                total_nutrients.update({nutrient: value})
+            else:
+                total_nutrients[nutrient] += value
+
+    for nutrient, value in total_nutrients.items():
+        if nutrient in preferences.keys():
+            goal = preferences.get(nutrient)
+            score += 1 - abs(goal - value)/goal
+    score = round(i/n, 4)
+
+    print(f"Current Meal Score: {score}")
+    for nutrient, value in total_nutrients.items():
+        print(f"Total {nutrient}: {value}")
     return score
-"""
 
+meal_score()
+
+"""
 for name, item in meal_plan.items():
-    print(f"{name} has: {item}")
+    print(f"{name} has:")
     for nutrient, value in item.get('nutrition').items():
-        print(f"{nutrient}: {value}")
-"""
+        print(f" {nutrient}: {value}")
 
+
+# you can use this to see what the meal plan items look like
 for item in meal_plan.items():
     print(item)
+"""
