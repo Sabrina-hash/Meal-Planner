@@ -163,9 +163,13 @@ for name, item in meal_plan.items():
     print(f"{name} has:")
     for nutrient, value in item.get('nutrition').items():
         print(f" {nutrient}: {value}")
-
+"""
 
 # you can use this to see what the meal plan items look like
-for item in meal_plan.items():
-    print(item)
-"""
+for key, value in meal_plan.items():
+    print(f"Key: {key}")
+    print(f"Value: {value}")
+
+
+#for item in meal_plan.values().get('ingredients'):
+#    print(item)
