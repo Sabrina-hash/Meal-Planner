@@ -136,7 +136,7 @@ for i in range (7):
 # this function returns the score of the current meal plan. Unfinished
 def meal_score():
     score = 0
-    n = len(meal_plan)
+    
     total_nutrients = {}        # stores total 
     for name, item in meal_plan.items():
         for nutrient, value in item.get('nutrition').items():
@@ -148,10 +148,11 @@ def meal_score():
     for nutrient, value in total_nutrients.items():
         if nutrient in preferences.keys():
             goal = preferences.get(nutrient)
+            print(f"{nutrient} has a score of {1 - abs(goal - value)/goal}!")
             score += 1 - abs(goal - value)/goal
-    score = round(i/n, 4)
-
-    print(f"Current Meal Score: {score}")
+    n = len(total_nutrients)
+    score = round(score/n, 4)
+    print(f"The Current Meal Score is: {score}")
     for nutrient, value in total_nutrients.items():
         print(f"Total {nutrient}: {value}")
     return score
@@ -163,13 +164,13 @@ for name, item in meal_plan.items():
     print(f"{name} has:")
     for nutrient, value in item.get('nutrition').items():
         print(f" {nutrient}: {value}")
-"""
+
 
 # you can use this to see what the meal plan items look like
 for key, value in meal_plan.items():
     print(f"Key: {key}")
     print(f"Value: {value}")
-
+"""
 
 #for item in meal_plan.values().get('ingredients'):
 #    print(item)
