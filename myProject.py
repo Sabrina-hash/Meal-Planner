@@ -63,7 +63,8 @@ def getImportance(nutrition):
     i = round(i/n, 4)
     return i
 
-# Find the best dish available from recipes, adds it to the meal_plan list, and removes the recipe from the recipe list
+# Find the best dish available from recipes, return its name
+# No longer adds it to the meal_plan list, and removes the recipe from the recipe list
 def find_best():
     best = [0, None]      # i score, name
     for recipe_name, recipe_info in recipes.items():
@@ -74,8 +75,17 @@ def find_best():
             best[1] = recipe_name
     if best[1] is not None:     # failsafe in the event that recipes.json has less than 7 available recipes
         print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
-        the_recipe = recipes.pop(best[1])
-        meal_plan.update({best[1]: the_recipe})
+        return best[1]
+#        the_recipe = recipes.pop(best[1])
+#        meal_plan.update({best[1]: the_recipe})
+    else:
+        print("No unused recipes left.")
+
+def initialize_meal_plan():
+    for i in range (7):
+        recipe_name = find_best()
+        the_recipe = recipes.pop(recipe_name)
+        meal_plan.update({recipe_name: the_recipe})
 
 # this function returns prints information, and returns the score of the current meal plan. Unfinished
 def get_meal_score(filter_recipe = None):       # filter_recipe is used after we build our initial meal plan
@@ -112,7 +122,15 @@ def get_meal_score(filter_recipe = None):       # filter_recipe is used after we
 def replace_recipe(recipe_name):
     removed = {recipe_name: meal_plan.pop(recipe_name)}
     recipes.update(removed)
-    find_best()
+    new_recipe_name = find_best()
+    if new_recipe_name == recipe_name:
+        print(f"This recipe ({recipe_name}) can't be improved, try a different one.")
+        return False
+    else:
+        the_recipe = recipes.pop(new_recipe_name)
+        meal_plan.update({new_recipe_name: the_recipe})
+        return True
+
 
 # Removes the recipe from meal_plan
 # Adds it back into recipes
@@ -123,18 +141,19 @@ def improve_meal_plan():
         print("\nTHE MEAL PLAN SATISFIES PREFERENCES!\n")
         return  # meal plan is ready
     else:
-        best_score = [0, ""]                # score, name
-
+#        best_score = [0, ""]                # score, name
+        meal_scores = []
         # find the recipe that has the best impact if removed
-        for name, item in meal_plan.items():    
-            this = get_meal_score(name)
-            if this > best_score[0]:
-                best_score[0] = this
-                best_score[1] = name
-        print(f"We are replacing {best_score[1]}, since the meal plan has the highest score of {best_score[0]} without it!")
-        replace_recipe(best_score[1])
-        recursion_count[0] += 1
-        improve_meal_plan()
+        for name, item in meal_plan.items():   
+            meal_score = get_meal_score(name)
+            meal_scores.append((name, meal_score))
+        meal_scores.sort(key=lambda x: x[1], reverse=True)
+        for i in range(0, len(meal_scores)):
+            if replace_recipe(meal_scores[i][0]):
+                recursion_count[0] += 1
+                improve_meal_plan()
+                return
+
 
 def write_meal_plan():
     with open('meal_plan.txt', "w") as file:
@@ -153,6 +172,7 @@ def write_meal_plan():
         for name, value in total_nutrients.items():
             file.write(f"\n{name}: {value}")
         file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
+        file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
 
 if __name__ == "__main__":
     # read everything
@@ -160,10 +180,7 @@ if __name__ == "__main__":
     read_preferences('preferences.json')
     read_recipes('recipes.json')
 
-    for i in range (7):
-        find_best()
-        pass
-
+    initialize_meal_plan()
     improve_meal_plan()
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
     write_meal_plan()
