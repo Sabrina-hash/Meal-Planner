@@ -1,7 +1,4 @@
 # To Do List
-- Come up with an algorithm for create_meal_plan.
-  - This is the first step, and also the hardest one.
-  - I have an algorithm idea mostly sketched out so far. Not perfect but it could work, yet to implement. -Omer
 - Develop generate_shopping_list
   - Will be simple
 - Create figures with our results
