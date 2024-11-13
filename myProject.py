@@ -131,6 +131,60 @@ def replace_recipe(recipe_name):
         return True
 
 
+def load_ingredient_units(filename="ingredients.csv"):
+    ingredient_units = {}
+    with open(filename, mode='r') as file:
+        csv_reader = csv.DictReader(file, delimiter='\t')
+        for row in csv_reader:
+            ingredient_name = row['name']
+            base_qty = float(row['quantity'])
+            unit = row['unit']
+            ingredient_units[ingredient_name] = {"quantity": base_qty, "unit": unit}
+    return ingredient_units
+
+
+def generate_shopping_list(meal_plan, ingredient_units):
+    shopping_list = {}
+    for recipe_name, details in meal_plan.items():
+        ingredients = details.get("ingredients", {})
+        for ingredient, qty in ingredients.items():
+            if ingredient in shopping_list:
+                shopping_list[ingredient] += qty
+            else:
+                shopping_list[ingredient] = qty
+
+    adjusted_shopping_list = {}
+    for ingredient, total_qty in shopping_list.items():
+        if ingredient in ingredient_units:
+            base_qty = ingredient_units[ingredient]["quantity"]
+            unit = ingredient_units[ingredient]["unit"]
+            adjusted_qty = total_qty / base_qty
+
+            if adjusted_qty < 1 and total_qty >= base_qty:
+                adjusted_qty = int(total_qty)
+                unit = "grams"
+            else:
+                adjusted_qty = max(1, round(adjusted_qty))
+
+            adjusted_shopping_list[ingredient] = f"{adjusted_qty} {unit}"
+        else:
+            adjusted_shopping_list[ingredient] = f"{int(total_qty)} grams"
+
+    return adjusted_shopping_list
+
+
+def save_shopping_list_to_file(shopping_list, filename="shopping_list.txt"):
+    with open(filename, "w") as file:
+        file.write("Shopping List for the Week\n")
+        file.write("==========================\n")
+        for item, qty_with_unit in shopping_list.items():
+            file.write(f"{item}: {qty_with_unit}\n")
+    print(f"Shopping list saved to {filename}")
+
+
+
+
+
 # Then finds the best recipe in recipes to replace it with
 def improve_meal_plan():
     current_score = get_meal_score()
@@ -222,6 +276,9 @@ if __name__ == "__main__":
     improve_meal_plan()
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
     write_meal_plan()
+    ingredient_units = load_ingredient_units("ingredients.csv")
+    shopping_list = generate_shopping_list(meal_plan, ingredient_units)
+    save_shopping_list_to_file(shopping_list)
 
     # Call the plotting function
     plot_daily_nutrition()
