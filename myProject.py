@@ -73,7 +73,7 @@ def find_best():
             best[0] = i
             best[1] = recipe_name
     if best[1] is not None:     # failsafe in the event that recipes.json has less than 7 available recipes
-        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
+#        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
         return best[1]
     else:
         print("No unused recipes left.")
@@ -126,7 +126,7 @@ def replace_recipe(recipe_name):
     else:
         the_recipe = recipes.pop(new_recipe_name)
         meal_plan.update({new_recipe_name: the_recipe})
-        print(f"Replacing {recipe_name} with {new_recipe_name}, giving us a score of {get_meal_score()}")
+#        print(f"Replacing {recipe_name} with {new_recipe_name}, giving us a score of {get_meal_score()}")
         return True
 
 
@@ -154,7 +154,8 @@ def improve_meal_plan():
                 return
             else:
                 if (i + 1) < len(meal_scores):
-                    print(f"Replacing {meal_scores[i][0]} can't improve the score. Trying {meal_scores[i + 1][0]}")
+#                    print(f"Replacing {meal_scores[i][0]} can't improve the score. Trying {meal_scores[i + 1][0]}")
+                    pass
                 else:
                     print("Meal Plan Cannot Be Further Improved")
 
