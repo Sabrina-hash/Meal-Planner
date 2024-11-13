@@ -8,6 +8,7 @@
 
 import csv
 import json
+import matplotlib.pyplot as plt
 
 # Global data structures
 ingredients = []        # global list of ingredients
@@ -179,7 +180,38 @@ def write_meal_plan():
             file.write(f"\n{name}: {value}")
         file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
         file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
+# Plotting function 
+def plot_daily_nutrition():
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    daily_nutrients = {day: {} for day in days}
+    total_nutrients = {}
+    
+    # Aggregate total nutrients from the meal plan
+    for item in meal_plan.values():
+        for nutrient, value in item.get('nutrition', {}).items():
+            total_nutrients[nutrient] = total_nutrients.get(nutrient, 0) + value
+    
+    # Distribute nutrients equally across the days
+    for nutrient, total in total_nutrients.items():
+        for day in days:
+            daily_nutrients[day][nutrient] = total / 7
 
+    nutrients = list(total_nutrients.keys())
+    nutrient_data = {nutrient: [daily_nutrients[day][nutrient] for day in days] for nutrient in nutrients}
+    
+    fig, ax = plt.subplots()
+    bottom = [0] * len(days)
+    
+    for nutrient in nutrients:
+        ax.bar(days, nutrient_data[nutrient], label=nutrient, bottom=bottom)
+        bottom = [bottom[i] + nutrient_data[nutrient][i] for i in range(len(days))]
+    
+    ax.set_xlabel("Day of Week")
+    ax.set_ylabel("Amount")
+    ax.set_title("Daily Nutrient Breakdown")
+    ax.legend()
+    
+    plt.show()
 if __name__ == "__main__":
     # read everything
     read_ingredients('ingredients.csv')
@@ -190,6 +222,9 @@ if __name__ == "__main__":
     improve_meal_plan()
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
     write_meal_plan()
+
+    # Call the plotting function
+    plot_daily_nutrition()
 
 
 """
