@@ -131,16 +131,15 @@ def replace_recipe(recipe_name):
         return True
 
 
-def load_ingredient_units(filename="ingredients.csv"):
+def convert_to_units_dict(ingredients_data):
     ingredient_units = {}
-    with open(filename, mode='r') as file:
-        csv_reader = csv.DictReader(file, delimiter='\t')
-        for row in csv_reader:
-            ingredient_name = row['name']
-            base_qty = float(row['quantity'])
-            unit = row['unit']
-            ingredient_units[ingredient_name] = {"quantity": base_qty, "unit": unit}
+    for item in ingredients_data:
+        name = item["name"]
+        quantity = item["quantity"]
+        unit = item["unit"]
+        ingredient_units[name] = {"quantity": quantity, "unit": unit}
     return ingredient_units
+
 
 
 def generate_shopping_list(meal_plan, ingredient_units):
@@ -160,11 +159,13 @@ def generate_shopping_list(meal_plan, ingredient_units):
             unit = ingredient_units[ingredient]["unit"]
             adjusted_qty = total_qty / base_qty
 
-            if adjusted_qty < 1 and total_qty >= base_qty:
-                adjusted_qty = int(total_qty)
-                unit = "grams"
+            # Calculate adjusted quantity, ensuring it is a whole number
+            if adjusted_qty >= 1:
+                adjusted_qty = int(round(adjusted_qty))
             else:
-                adjusted_qty = max(1, round(adjusted_qty))
+                # For values less than 1, we use total_qty in grams/ml
+                adjusted_qty = int(total_qty)
+                unit = "grams" if "grams" in ingredient_units[ingredient]["unit"] else "ml"
 
             adjusted_shopping_list[ingredient] = f"{adjusted_qty} {unit}"
         else:
@@ -180,7 +181,6 @@ def save_shopping_list_to_file(shopping_list, filename="shopping_list.txt"):
         for item, qty_with_unit in shopping_list.items():
             file.write(f"{item}: {qty_with_unit}\n")
     print(f"Shopping list saved to {filename}")
-
 
 
 
@@ -276,7 +276,7 @@ if __name__ == "__main__":
     improve_meal_plan()
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
     write_meal_plan()
-    ingredient_units = load_ingredient_units("ingredients.csv")
+    ingredient_units = convert_to_units_dict(ingredients_data)
     shopping_list = generate_shopping_list(meal_plan, ingredient_units)
     save_shopping_list_to_file(shopping_list)
 
