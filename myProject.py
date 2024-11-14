@@ -234,23 +234,16 @@ def write_meal_plan():
             file.write(f"\n{name}: {value}")
         file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
         file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
+
 # Plotting function 
 def plot_daily_nutrition():
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     daily_nutrients = {day: {} for day in days}
-    total_nutrients = {}
-    
-    # Aggregate total nutrients from the meal plan
-    for item in meal_plan.values():
-        for nutrient, value in item.get('nutrition', {}).items():
-            total_nutrients[nutrient] = total_nutrients.get(nutrient, 0) + value
-    
-    # Distribute nutrients equally across the days
-    for nutrient, total in total_nutrients.items():
-        for day in days:
-            daily_nutrients[day][nutrient] = total / 7
 
-    nutrients = list(total_nutrients.keys())
+    for day, (recipe_name, recipe) in zip(days, meal_plan.items()):
+        daily_nutrients[day] = recipe.get('nutrition', {})
+
+    nutrients = list(next(iter(daily_nutrients.values())).keys())
     nutrient_data = {nutrient: [daily_nutrients[day][nutrient] for day in days] for nutrient in nutrients}
     
     fig, ax = plt.subplots()
@@ -266,6 +259,7 @@ def plot_daily_nutrition():
     ax.legend()
     
     plt.show()
+    
 if __name__ == "__main__":
     # read everything
     read_ingredients('ingredients.csv')
