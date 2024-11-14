@@ -1,20 +1,21 @@
 # Read a list of ingredients from "ingredients.csv"         DONE
 # Read user preferences and goals from "preferences.json"   DONE
 # Writes a meal plan "meal_plan.txt"                        DONE
-# Writes a shopping list "shopping_list.txt"
+# Writes a shopping list "shopping_list.txt"                CLOSE
 
 # Implement an algorithm to recommend recipes based on available ingredients and user preferences.                  NEEDS LOTS OF IMPROVEMENT
-# Create a shopping list generator that identifies additional ingredients needed for the selected recipes
+# Create a shopping list generator that identifies additional ingredients needed for the selected recipes       CLOSE
 
 import csv
 import json
 import matplotlib.pyplot as plt
 
 # Global data structures
-ingredients = []        # global list of ingredients
-preferences = {}        # global dictionary for preferences
-recipes = {}            # global dictionary for recipes
-meal_plan = {}          # dictionary of recipes in the meal plan
+ingredients = []        # global list of ingredients            [{'name': 'chicken', 'quantity': 500, 'unit': grams}, {}...]
+preferences = {}        # global dictionary for preferences     {'calories': 2650, 'protein': 118, 'carbs': 360, 'fat': 85, 'diet': 'vegetarian'}
+recipes = {}            # global dictionary for recipes         {'Pasta': {'diet': 'vegetarian', 'ingredients': {'pasta': 100, 'tomato': 50}, 'nutrition': {'calories': 300, ...}}...}
+meal_plan = {}          # dictionary of recipes in the meal plan (the same format as recipes)
+shopping_list = {}      # dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
 
 # Global Variables
 acceptanceVal = 0
@@ -130,60 +131,77 @@ def replace_recipe(recipe_name):
 #        print(f"Replacing {recipe_name} with {new_recipe_name}, giving us a score of {get_meal_score()}")
         return True
 
-
-def convert_to_units_dict(ingredients_data):
     ingredient_units = {}
-    for item in ingredients_data:
-        name = item["name"]
-        quantity = item["quantity"]
-        unit = item["unit"]
-        ingredient_units[name] = {"quantity": quantity, "unit": unit}
+    with open(filename, mode='r') as file:
+        csv_reader = csv.DictReader(file, delimiter='\t')
+        for row in csv_reader:
+            ingredient_name = row['name']
+            base_qty = float(row['quantity'])
+            unit = row['unit']
+            ingredient_units[ingredient_name] = {"quantity": base_qty, "unit": unit}
     return ingredient_units
 
+# Should:
+# Create shopping list and return it
+# Input: Nothing. Everything is already a global variable
+# Output: shopping_list (a dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
 
+def add_ingredient(ingredient_name, ingredient_value):
+    if ingredient_name in shopping_list:
+        shopping_list[ingredient_name]['quantity'] += ingredient_value
+    else:
+        ingredient_unit = 'grams'   # temporary, will update to match the correct unit later
+        for ingredient in ingredients:
+            if ingredient.get('name') == ingredient_name:
+                ingredient_unit = ingredient.get('unit')
+                break
+        shopping_list.update({ingredient_name: {'quantity': ingredient_value, 'unit': ingredient_unit}})
 
-def generate_shopping_list(meal_plan, ingredient_units):
-    shopping_list = {}
-    for recipe_name, details in meal_plan.items():
-        ingredients = details.get("ingredients", {})
-        for ingredient, qty in ingredients.items():
-            if ingredient in shopping_list:
-                shopping_list[ingredient] += qty
-            else:
-                shopping_list[ingredient] = qty
+def add_meal(meal):
+    pass
+    for ingredient_name, ingredient_value in meal.get('ingredients').items():
+        add_ingredient(ingredient_name, ingredient_value)
+    # add each ingredient to the shopping list
 
-    adjusted_shopping_list = {}
-    for ingredient, total_qty in shopping_list.items():
-        if ingredient in ingredient_units:
-            base_qty = ingredient_units[ingredient]["quantity"]
-            unit = ingredient_units[ingredient]["unit"]
-            adjusted_qty = total_qty / base_qty
+# shopping list equals total ingredients needed - ingredients we already have. Negatives should be removed
+def generate_shopping_list():
+    for meal in meal_plan.values():
+        add_meal(meal)
+    for ingredient in ingredients:
+        ingredient_name = ingredient.get('name')
+        ingredient_value = ingredient.get('quantity')
+        if ingredient_name in shopping_list:
+            shopping_list[ingredient_name]['quantity'] -= ingredient_value
+            # if this creates a number that is <= 0, remove the ingredient from shopping list
+            if shopping_list[ingredient_name]['quantity'] <= 0:
+                shopping_list.pop(ingredient_name)
 
-            # Calculate adjusted quantity, ensuring it is a whole number
-            if adjusted_qty >= 1:
-                adjusted_qty = int(round(adjusted_qty))
-            else:
-                # For values less than 1, we use total_qty in grams/ml
-                adjusted_qty = int(total_qty)
-                unit = "grams" if "grams" in ingredient_units[ingredient]["unit"] else "ml"
-
-            adjusted_shopping_list[ingredient] = f"{adjusted_qty} {unit}"
-        else:
-            adjusted_shopping_list[ingredient] = f"{int(total_qty)} grams"
-
-    return adjusted_shopping_list
-
-
-def save_shopping_list_to_file(shopping_list, filename="shopping_list.txt"):
-    with open(filename, "w") as file:
+def write_shopping_list():
+    with open('shopping_list.txt', "w") as file:
         file.write("Shopping List for the Week\n")
-        file.write("==========================\n")
-        for item, qty_with_unit in shopping_list.items():
-            file.write(f"{item}: {qty_with_unit}\n")
-    print(f"Shopping list saved to {filename}")
+        for name, value in shopping_list.items():
+            file.write(f"\n{name}: {value.get('quantity')} {value.get('unit')}")
+# Creates meal_plan.txt and writes helpful information into it.
 
-
-
+# We need to make sure it displays the information the assignment wants from us
+def write_meal_plan():
+    with open('meal_plan.txt', "w") as file:
+        file.write("The Meals: ")
+        for meal in meal_plan.keys():
+            file.write(f"{meal}, ")
+        file.write(f"\n\nThe Meal Score: {get_meal_score()}")
+        file.write(f"\n\nNutritional Values:")
+        total_nutrients = {}        # stores total 
+        for name, item in meal_plan.items():
+            for nutrient, value in item.get('nutrition').items():
+                if nutrient not in total_nutrients.keys():
+                    total_nutrients.update({nutrient: value})
+                else:
+                    total_nutrients[nutrient] += value
+        for name, value in total_nutrients.items():
+            file.write(f"\n{name}: {value}")
+        file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
+        file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
 
 # Then finds the best recipe in recipes to replace it with
 def improve_meal_plan():
@@ -214,27 +232,6 @@ def improve_meal_plan():
                 else:
                     print("Meal Plan Cannot Be Further Improved")
 
-# Creates meal_plan.txt and writes helpful information into it.
-# We need to make sure it displays the information the assignment wants from us
-def write_meal_plan():
-    with open('meal_plan.txt', "w") as file:
-        file.write("The Meals: ")
-        for meal in meal_plan.keys():
-            file.write(f"{meal}, ")
-        file.write(f"\n\nThe Meal Score: {get_meal_score()}")
-        file.write(f"\n\nNutritional Values:")
-        total_nutrients = {}        # stores total 
-        for name, item in meal_plan.items():
-            for nutrient, value in item.get('nutrition').items():
-                if nutrient not in total_nutrients.keys():
-                    total_nutrients.update({nutrient: value})
-                else:
-                    total_nutrients[nutrient] += value
-        for name, value in total_nutrients.items():
-            file.write(f"\n{name}: {value}")
-        file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
-        file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
-
 # Plotting function 
 def plot_daily_nutrition():
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -259,10 +256,10 @@ def plot_daily_nutrition():
     ax.legend()
     
     plt.show()
-    
+
 if __name__ == "__main__":
     # read everything
-    read_ingredients('ingredients.csv')
+    read_ingredients('ingredients.csv') 
     read_preferences('preferences.json')
     read_recipes('recipes.json')
 
@@ -270,11 +267,10 @@ if __name__ == "__main__":
     improve_meal_plan()
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
     write_meal_plan()
-    ingredient_units = convert_to_units_dict(ingredients_data)
-    shopping_list = generate_shopping_list(meal_plan, ingredient_units)
-    save_shopping_list_to_file(shopping_list)
 
-    # Call the plotting function
+    generate_shopping_list()
+    write_shopping_list()
+    
     plot_daily_nutrition()
 
 
