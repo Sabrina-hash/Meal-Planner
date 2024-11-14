@@ -1,10 +1,10 @@
 # Read a list of ingredients from "ingredients.csv"         DONE
 # Read user preferences and goals from "preferences.json"   DONE
 # Writes a meal plan "meal_plan.txt"                        DONE
-# Writes a shopping list "shopping_list.txt"                CLOSE
+# Writes a shopping list "shopping_list.txt"                DONE
 
-# Implement an algorithm to recommend recipes based on available ingredients and user preferences.                  NEEDS LOTS OF IMPROVEMENT
-# Create a shopping list generator that identifies additional ingredients needed for the selected recipes       CLOSE
+# Implement an algorithm to recommend recipes based on available ingredients and user preferences.              COULD BE IMPROVED IF WE WANT
+# Create a shopping list generator that identifies additional ingredients needed for the selected recipes       DONE
 
 import csv
 import json
@@ -130,16 +130,6 @@ def replace_recipe(recipe_name):
         meal_plan.update({new_recipe_name: the_recipe})
 #        print(f"Replacing {recipe_name} with {new_recipe_name}, giving us a score of {get_meal_score()}")
         return True
-
-    ingredient_units = {}
-    with open(filename, mode='r') as file:
-        csv_reader = csv.DictReader(file, delimiter='\t')
-        for row in csv_reader:
-            ingredient_name = row['name']
-            base_qty = float(row['quantity'])
-            unit = row['unit']
-            ingredient_units[ingredient_name] = {"quantity": base_qty, "unit": unit}
-    return ingredient_units
 
 # Should:
 # Create shopping list and return it
