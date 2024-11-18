@@ -1,6 +1,32 @@
-# To Do List
-- Develop generate_shopping_list
-  - Will be simple
-- Create figures with our results
-  - Should be easy, just import some library from somewhere
-- A few other things that we have yet to worry about because our code hasn't been finished yet!
+# Meal Planner Project
+This project is a meal planning application that recommends recipes,
+creates meal plans, generates shopping lists, and provides nutritional
+analysis.
+## Setup
+1. Clone the repository
+2. Install the required packages:
+pip install -r requirements.txt
+'pip install matplotlib' works as well
+4. Ensure you have 'ingredients.csv', 'recipies.json', and 'preferences.json' in the
+project directory
+5. Run the main script:
+python myProject.py
+## Running Tests
+To run the unit tests:
+python -m unittest test_myProject.py
+## Features
+- Recipe recommendation based on available ingredients and dietary
+preferences
+- Weekly meal plan generation
+- Shopping list creation
+- Nutritional analysis of the meal plan
+- No duplicate meals
+- Very Fast Runtime
+## File Structure
+- `myProject.py`: Main script containing all functions
+- `ingredients.csv`: CSV file containing available ingredients
+- `preferences.json`: JSON file containing user preferences and
+nutritional goals
+- `recipes.json`: JSON file containing recipes, their ingredients, dietary restriction, and nutritional values
+- `requirements.txt`: List of required Python packages
+- `test_myProject.py`: Unit tests for the project
