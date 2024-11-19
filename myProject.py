@@ -1,11 +1,3 @@
-# Read a list of ingredients from "ingredients.csv"         DONE
-# Read user preferences and goals from "preferences.json"   DONE
-# Writes a meal plan "meal_plan.txt"                        DONE
-# Writes a shopping list "shopping_list.txt"                DONE
-
-# Implement an algorithm to recommend recipes based on available ingredients and user preferences.              COULD BE IMPROVED IF WE WANT
-# Create a shopping list generator that identifies additional ingredients needed for the selected recipes       DONE
-
 import csv
 import json
 import matplotlib.pyplot as plt
@@ -17,38 +9,55 @@ recipes = {}            # global dictionary for recipes         {'Pasta': {'diet
 meal_plan = {}          # dictionary of recipes in the meal plan (the same format as recipes)
 shopping_list = {}      # dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
 
-# Global Variables
-acceptanceVal = 0
+# Keeping track of recursion count
 recursion_count = [0]
+
+# myProject.py makes use of global variables for most things, but these data structures are now passed as arguments to accomodate for unit testing
 
 def read_ingredients(file_path):
     global ingredients
-    with open(file_path, mode='r', newline='') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            ingredients.append({
-                'name': row['name'],
-                'quantity': int(row['quantity']),
-                'unit': row['unit']
-            })
+    try:
+        with open(file_path, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            ingredients = []  # Initialize or clear the global list
+            for row in reader:
+                ingredients.append({        # each entry of the list is a dictionary with three keys: {name, quanitity, unit}
+                    'name': row['name'],
+                    'quantity': int(row['quantity']),
+                    'unit': row['unit']
+                })
+        return True
+    except Exception as e:
+        print(f"Error reading ingredients: {e}")
+        return False
 
 def read_preferences(file_path):
     global preferences
-    with open(file_path, mode='r') as file:
-        data = json.load(file)  # Load the entire JSON data
-        all = data.get('user_preferences', {})  # Store only the content of 'user_preferences'
-        preferences = all.get('nutritional_goals', {})  # get nutritional goals
-        preferences.update({'diet': all.get('diet')})   # add the diet
+    try:
+        with open(file_path, mode='r') as file:
+            data = json.load(file)  # Load the entire JSON data
+            all_prefs = data.get('user_preferences', {})  # Store only the content of 'user_preferences'
+            preferences = all_prefs.get('nutritional_goals', {})  # Get nutritional goals
+            preferences.update({'diet': all_prefs.get('diet')})  # Add the diet
+        return True
+    except Exception as e:
+        print(f"Error reading preferences: {e}")
+        return False
 
 def read_recipes(file_path):
     global recipes
-    with open(file_path, mode='r') as file:
-        recipes = json.load(file)
-    if(preferences.get('diet') == "vegetarian"):
-        print("Filtering out non-vegetarian dishes...")
-        for recipe in list(recipes.keys()):                    # going through a list of keys
-            if recipes[recipe].get('diet') != "vegetarian":
-                recipes.pop(recipe)
+    try:
+        with open(file_path, mode='r') as file:
+            recipes = json.load(file)
+        if preferences.get('diet') == "vegetarian":
+            print("Filtering out non-vegetarian dishes...")
+            for recipe in list(recipes.keys()):  # Go through a list of keys
+                if recipes[recipe].get('diet') != "vegetarian":
+                    recipes.pop(recipe)
+        return True
+    except Exception as e:
+        print(f"Error reading recipes: {e}")
+        return False
 
 # this function takes recipe info and returns the i value!
 # nutrition is in form of:                                  {'calories': 300, 'protein': 25,...}
@@ -58,8 +67,8 @@ def getImportance(nutrition, preferences, meal_plan):
     for nutrient in preferences.keys():
         if nutrient != 'diet':
             goal = preferences.get(nutrient)
-            progress = nutrition.get(nutrient, 0)
-            if len(meal_plan) > 0:
+            progress = nutrition.get(nutrient, 0)       # progress is the combination of the recipe we are scoring, with the recipes already in meal_plan
+            if len(meal_plan) > 0:                  
                 for item in meal_plan.values():
                     progress += item.get('nutrition').get(nutrient, 0)
             n += 1
@@ -67,7 +76,7 @@ def getImportance(nutrition, preferences, meal_plan):
     if n != 0:
         i = round(i/n, 4)
     else:
-        raise ValueError("Tried to divide by 0. n is 0.")
+        raise ValueError("Tried to divide by 0. n is 0.")       # I don't expect this case to happen anymore
     return i
 
 # Find the best meal that could be added to meal plan from available from recipes. Return its name.
@@ -80,12 +89,13 @@ def find_best(recipes, preferences, meal_plan):
             best[0] = i
             best[1] = recipe_name
     if best[1] is not None:     # failsafe in the event that recipes.json has less than 7 available recipes
-        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
         return best[1]
     else:
         raise TypeError("Not enough recipes available to use")
 
-def initialize_meal_plan():
+# Get the first (best) seven recipes into meal plan. This should create a decent starting point for the recursive function later on
+# The originial idea was to start with a random selection of meals, but this seems like a better idea.
+def initialize_meal_plan(recipes, preferences, meal_plan):
     print("Initializing Meal Plan...")
     for i in range (7):
         recipe_name = find_best(recipes, preferences, meal_plan)
@@ -95,7 +105,8 @@ def initialize_meal_plan():
 
 # this function returns the score of the current meal plan. 
 # If a recipe name is passed, it returns what the score of the meal plan would be without that recipe
-def get_meal_score(preferences, meal_plan, filter_recipe = None):       # filter_recipe is used after we build our initial meal plan
+# filter_recipe is used after we build our initial meal plan
+def get_meal_score(preferences, meal_plan, filter_recipe = None):       
     score = 0
     total_nutrients = {}        # stores total 
     for name, item in meal_plan.items():
@@ -119,7 +130,7 @@ def get_meal_score(preferences, meal_plan, filter_recipe = None):       # filter
     return score
 
 # removes the recipe from meal plan, then adds it back to recipes dictionary
-# finds the new best recipe. If it's the same as the removed one, then return false (needs to be added back, is it?)
+# finds the new best recipe. If it's the same as the removed one, then return false and add it back
 def replace_recipe(recipe_name, recipes, preferences, meal_plan):
     removed = {recipe_name: meal_plan.pop(recipe_name)}
     recipes.update(removed)
@@ -133,9 +144,7 @@ def replace_recipe(recipe_name, recipes, preferences, meal_plan):
         meal_plan.update({new_recipe_name: the_recipe})
         return True
 
-# Update global variable shopping_list
-# Input: Nothing. Everything is already a global variable
-# Output: shopping_list (a dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
+# adds ingredient into the shopping list. Called by add_meal.
 def add_ingredient(ingredient_name, ingredient_value):
     if ingredient_name in shopping_list:
         shopping_list[ingredient_name]['quantity'] += ingredient_value
@@ -147,12 +156,12 @@ def add_ingredient(ingredient_name, ingredient_value):
                 break
         shopping_list.update({ingredient_name: {'quantity': ingredient_value, 'unit': ingredient_unit}})
 
+# add each ingredient to the shopping list. Calls add_ingredient.
 def add_meal(meal):
-    pass
     for ingredient_name, ingredient_value in meal.get('ingredients').items():
         add_ingredient(ingredient_name, ingredient_value)
-    # add each ingredient to the shopping list
 
+# Update global variable shopping_list (a dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
 # shopping list equals total ingredients needed - ingredients we already have. Negatives should be removed
 def generate_shopping_list():
     for meal in meal_plan.values():
@@ -166,86 +175,101 @@ def generate_shopping_list():
             if shopping_list[ingredient_name]['quantity'] <= 0:
                 shopping_list.pop(ingredient_name)
 
+# writes the information from shopping_list into shopping_list.txt
 def write_shopping_list():
     with open('shopping_list.txt', "w") as file:
         file.write("Shopping List for the Week\n")
         for name, value in shopping_list.items():
             file.write(f"\n{name}: {value.get('quantity')} {value.get('unit')}")
+
 # Creates meal_plan.txt and writes helpful information into it.
+def write_meal_plan(preferences, meal_plan):
+    try:
+        with open('meal_plan.txt', "w") as file:
+            file.write("The Meals: ")
+            for meal in meal_plan.keys():
+                file.write(f"{meal}, ")
+            file.write(f"\n\nThe Meal Score: {get_meal_score(preferences, meal_plan)}")
+            file.write(f"\n\nNutritional Values:")
+            total_nutrients = {}        # stores total 
+            for name, item in meal_plan.items():
+                for nutrient, value in item.get('nutrition').items():
+                    if nutrient not in total_nutrients.keys():
+                        total_nutrients.update({nutrient: value})
+                    else:
+                        total_nutrients[nutrient] += value
+            for nutrient in preferences.keys():
+                if nutrient != 'diet':
+                    value = total_nutrients.get(nutrient, 0)
+                    file.write(f"\n{nutrient}: {value}")
 
-# We need to make sure it displays the information the assignment wants from us
-def write_meal_plan():
-    with open('meal_plan.txt', "w") as file:
-        file.write("The Meals: ")
-        for meal in meal_plan.keys():
-            file.write(f"{meal}, ")
-        file.write(f"\n\nThe Meal Score: {get_meal_score(preferences, meal_plan)}")
-        file.write(f"\n\nNutritional Values:")
-        total_nutrients = {}        # stores total 
-        for name, item in meal_plan.items():
-            for nutrient, value in item.get('nutrition').items():
-                if nutrient not in total_nutrients.keys():
-                    total_nutrients.update({nutrient: value})
-                else:
-                    total_nutrients[nutrient] += value
-        for nutrient in preferences.keys():
-            if nutrient != 'diet':
-                value = total_nutrients.get(nutrient, 0)
-                file.write(f"\n{nutrient}: {value}")
+            file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
+            file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
+    except Exception as e:
+        print(f"Error writing meal plan: {e}")
+        return False
 
-        file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
-        file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
-
-# Then finds the best recipe in recipes to replace it with
-def improve_meal_plan():
+# Recursively runs until the meal score satisfies our needs, or we can't improve any further.
+# Each iteration must improve meal score
+def improve_meal_plan(recipes, preferences, meal_plan):
     current_score = get_meal_score(preferences, meal_plan)
-    if current_score >= 1 - (acceptanceVal + recursion_count[0]* 0.001):
+    if current_score >= 1 - (recursion_count[0]* 0.001):
         print("\nTHE MEAL PLAN SATISFIES PREFERENCES!\n")
         return  # meal plan is ready
     else:
         # find the recipe that has the best impact if removed
-        # list of all the meals and the score if they were removed. The highest score is the least important
+        # list all the meals and the score if they were removed. The highest score is the least important
         print(f"Trying to Improve Meal Score of {current_score}...")
         meal_scores = []
         for name, item in meal_plan.items():   
             meal_score = get_meal_score(preferences, meal_plan, name)
             meal_scores.append((name, meal_score))
-        meal_scores.sort(key=lambda x: x[1], reverse=True)
+        meal_scores.sort(key=lambda x: x[1], reverse=True)      # sort them in order
 
         # try to replace least important first. If it can't be replaced to improve the score, try the next one
         for i in range(0, len(meal_scores)):
             if replace_recipe(meal_scores[i][0], recipes, preferences, meal_plan):
                 recursion_count[0] += 1
-                improve_meal_plan()
+                improve_meal_plan(recipes, preferences, meal_plan)
                 return
-            else:
-                print("Meal Plan Cannot Be Further Improved")
+        print("Meal Plan Cannot Be Further Improved")       # can't improve anymore, so we won't recusively call again
 
 # Plotting function 
-# NOT DONE
-def plot_daily_nutrition():
+def plot_daily_nutrition(preferences, meal_plan):
+    import matplotlib.pyplot as plt
+
+    # Extract nutrients from preferences (excluding 'diet')
+    nutrients = [nutrient for nutrient in preferences.keys() if nutrient != "diet"]
+
+    # Days of the week
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    daily_nutrients = {day: {} for day in days}
 
+    # Initialize daily nutrients with all preferences nutrients set to 0
+    daily_nutrients = {day: {nutrient: 0 for nutrient in nutrients} for day in days}
+
+    # Populate daily nutrients based on the meal plan
     for day, (recipe_name, recipe) in zip(days, meal_plan.items()):
-        daily_nutrients[day] = recipe.get('nutrition', {})
+        for nutrient in nutrients:
+            daily_nutrients[day][nutrient] = recipe.get('nutrition', {}).get(nutrient, 0)
 
-    nutrients = list(next(iter(daily_nutrients.values())).keys())
+    # Prepare data for plotting
     nutrient_data = {nutrient: [daily_nutrients[day][nutrient] for day in days] for nutrient in nutrients}
-    
+
+    # Plot the data
     fig, ax = plt.subplots()
     bottom = [0] * len(days)
-    
+
     for nutrient in nutrients:
         ax.bar(days, nutrient_data[nutrient], label=nutrient, bottom=bottom)
         bottom = [bottom[i] + nutrient_data[nutrient][i] for i in range(len(days))]
-    
+
     ax.set_xlabel("Day of Week")
     ax.set_ylabel("Amount")
     ax.set_title("Daily Nutrient Breakdown")
     ax.legend()
-    
+
     plt.show()
+
 
 if __name__ == "__main__":
     # read everything
@@ -253,12 +277,12 @@ if __name__ == "__main__":
     read_preferences('preferences.json')
     read_recipes('recipes.json')
 
-    initialize_meal_plan()
-    improve_meal_plan()
+    initialize_meal_plan(recipes, preferences, meal_plan)
+    improve_meal_plan(recipes, preferences, meal_plan)
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
-    write_meal_plan()
+    write_meal_plan(preferences, meal_plan)
 
     generate_shopping_list()
     write_shopping_list()
     
-    plot_daily_nutrition()
+    plot_daily_nutrition(preferences, meal_plan)
