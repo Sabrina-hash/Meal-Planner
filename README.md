@@ -5,8 +5,8 @@ analysis.
 ## Setup
 1. Clone the repository
 2. Install the required packages:
-pip install -r requirements.txt
-'pip install matplotlib' works as well
+`pip install -r requirements.txt`.
+`pip install matplotlib` works as well
 4. Ensure you have 'ingredients.csv', 'recipies.json', and 'preferences.json' in the
 project directory
 5. Run the main script:
