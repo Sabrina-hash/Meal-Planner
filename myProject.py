@@ -71,7 +71,7 @@ def getImportance(nutrition, preferences, meal_plan):
     return i
 
 # Find the best meal that could be added to meal plan from available from recipes. Return its name.
-def find_best():
+def find_best(recipes, preferences, meal_plan):
     best = [0, None]      # i score, name
     for recipe_name, recipe_info in recipes.items():
         nutrition = recipe_info.get('nutrition', {})
@@ -83,19 +83,19 @@ def find_best():
         print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
         return best[1]
     else:
-        print("No unused recipes left.")
+        raise TypeError("Not enough recipes available to use")
 
 def initialize_meal_plan():
     print("Initializing Meal Plan...")
     for i in range (7):
-        recipe_name = find_best()
+        recipe_name = find_best(recipes, preferences, meal_plan)
         the_recipe = recipes.pop(recipe_name)
         meal_plan.update({recipe_name: the_recipe})
     print("Meal Plan Has Been Initialized.")
 
 # this function returns the score of the current meal plan. 
 # If a recipe name is passed, it returns what the score of the meal plan would be without that recipe
-def get_meal_score(filter_recipe = None):       # filter_recipe is used after we build our initial meal plan
+def get_meal_score(preferences, meal_plan, filter_recipe = None):       # filter_recipe is used after we build our initial meal plan
     score = 0
     total_nutrients = {}        # stores total 
     for name, item in meal_plan.items():
@@ -120,10 +120,10 @@ def get_meal_score(filter_recipe = None):       # filter_recipe is used after we
 
 # removes the recipe from meal plan, then adds it back to recipes dictionary
 # finds the new best recipe. If it's the same as the removed one, then return false (needs to be added back, is it?)
-def replace_recipe(recipe_name):
+def replace_recipe(recipe_name, recipes, preferences, meal_plan):
     removed = {recipe_name: meal_plan.pop(recipe_name)}
     recipes.update(removed)
-    new_recipe_name = find_best()
+    new_recipe_name = find_best(recipes, preferences, meal_plan)
     if new_recipe_name == recipe_name:
         recipes.pop(recipe_name)
         meal_plan.update(removed)
@@ -179,7 +179,7 @@ def write_meal_plan():
         file.write("The Meals: ")
         for meal in meal_plan.keys():
             file.write(f"{meal}, ")
-        file.write(f"\n\nThe Meal Score: {get_meal_score()}")
+        file.write(f"\n\nThe Meal Score: {get_meal_score(preferences, meal_plan)}")
         file.write(f"\n\nNutritional Values:")
         total_nutrients = {}        # stores total 
         for name, item in meal_plan.items():
@@ -198,7 +198,7 @@ def write_meal_plan():
 
 # Then finds the best recipe in recipes to replace it with
 def improve_meal_plan():
-    current_score = get_meal_score()
+    current_score = get_meal_score(preferences, meal_plan)
     if current_score >= 1 - (acceptanceVal + recursion_count[0]* 0.001):
         print("\nTHE MEAL PLAN SATISFIES PREFERENCES!\n")
         return  # meal plan is ready
@@ -208,13 +208,13 @@ def improve_meal_plan():
         print(f"Trying to Improve Meal Score of {current_score}...")
         meal_scores = []
         for name, item in meal_plan.items():   
-            meal_score = get_meal_score(name)
+            meal_score = get_meal_score(preferences, meal_plan, name)
             meal_scores.append((name, meal_score))
         meal_scores.sort(key=lambda x: x[1], reverse=True)
 
         # try to replace least important first. If it can't be replaced to improve the score, try the next one
         for i in range(0, len(meal_scores)):
-            if replace_recipe(meal_scores[i][0]):
+            if replace_recipe(meal_scores[i][0], recipes, preferences, meal_plan):
                 recursion_count[0] += 1
                 improve_meal_plan()
                 return
