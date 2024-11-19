@@ -24,9 +24,10 @@ preferences
 - Very Fast Runtime
 ## File Structure
 - `myProject.py`: Main script containing all functions
-- `ingredients.csv`: CSV file containing available ingredients
+- `test_myProject.py`: Test script containing several test cases for the methods in `myProject.py`
+- `ingredients.csv`: CSV file containing available ingredients. Any number of ingredients can be added in the format name,quantity,unit.
 - `preferences.json`: JSON file containing user preferences and
-nutritional goals
-- `recipes.json`: JSON file containing recipes, their ingredients, dietary restriction, and nutritional values
-- `requirements.txt`: List of required Python packages
+nutritional goals. Must be in the same format as provided. Any number of nutrients can be added or removed.
+- `recipes.json`: JSON file containing recipes, their ingredients, dietary restriction, and nutritional values. Any number of recipes can be added or removed as long as it follows the same format.
+- `requirements.txt`: List of required Python packages. It's just matplotlib.
 - `test_myProject.py`: Unit tests for the project
