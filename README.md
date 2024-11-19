@@ -24,7 +24,7 @@ preferences
 - Very Fast Runtime
 ## File Structure
 - `myProject.py`: Main script containing all functions
-- `test_myProject.py`: Test script containing several test cases for the methods in `myProject.py`
+- `test_myProject.py`: Test script containing several test cases for the methods in `myProject.py`. Located in the `unit_tests` directory
 - `ingredients.csv`: CSV file containing available ingredients. Any number of ingredients can be added in the format name,quantity,unit.
 - `preferences.json`: JSON file containing user preferences and
 nutritional goals. Must be in the same format as provided. Any number of nutrients can be added or removed.
