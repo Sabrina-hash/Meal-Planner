@@ -51,15 +51,17 @@ def read_recipes(file_path):
                 recipes.pop(recipe)
 
 # this function takes recipe info and returns the i value!
+# nutrition is in form of:                                  {'calories': 300, 'protein': 25,...}
 def getImportance(nutrition):
     i = 0
     n = 0
-    for nutrient, value in nutrition.items():       # for each nutrient
-        if nutrient in preferences.keys():
+    for nutrient in preferences.keys():
+        if nutrient != 'diet':
             goal = preferences.get(nutrient)
-            progress = value
-            for item in meal_plan.values():
-                progress += item.get('nutrition').get(nutrient)
+            progress = nutrition.get(nutrient, 0)
+            if len(meal_plan) > 0:
+                for item in meal_plan.values():
+                    progress += item.get('nutrition').get(nutrient, 0)
             n += 1
             i += (1 - abs(progress - goal)/goal)
     i = round(i/n, 4)
@@ -75,7 +77,7 @@ def find_best():
             best[0] = i
             best[1] = recipe_name
     if best[1] is not None:     # failsafe in the event that recipes.json has less than 7 available recipes
-#        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
+        print(f"Highest scoring dish is {best[1]} with a score of {best[0]}!")
         return best[1]
     else:
         print("No unused recipes left.")
@@ -100,15 +102,13 @@ def get_meal_score(filter_recipe = None):       # filter_recipe is used after we
                     total_nutrients.update({nutrient: value})
                 else:
                     total_nutrients[nutrient] += value
-    if filter_recipe is not None:
-        pass
-#        print(f"SCORING WITHOUT {filter_recipe}!!")
-    for nutrient, value in total_nutrients.items():
-        if nutrient in preferences.keys():
+    for nutrient in preferences.keys():
+        if nutrient != 'diet':
             goal = preferences.get(nutrient)
-#            print(f"{nutrient} has a score of {round(1 - abs(goal - value)/goal, 4)}!")
+            value = total_nutrients.get(nutrient, 0)
             score += 1 - abs(goal - value)/goal
-    n = len(total_nutrients)
+
+    n = len(preferences) - 1        # -1 because we are excluding 'diet'
     if n > 0:
         score = round(score/n, 4)
     else:
@@ -128,14 +128,11 @@ def replace_recipe(recipe_name):
     else:
         the_recipe = recipes.pop(new_recipe_name)
         meal_plan.update({new_recipe_name: the_recipe})
-#        print(f"Replacing {recipe_name} with {new_recipe_name}, giving us a score of {get_meal_score()}")
         return True
 
-# Should:
-# Create shopping list and return it
+# Update global variable shopping_list
 # Input: Nothing. Everything is already a global variable
 # Output: shopping_list (a dictionary of dictionaries {chicken: {quantity: 10, unit: grams}, rice: {quantity: 20, unit: grams}...etc}
-
 def add_ingredient(ingredient_name, ingredient_value):
     if ingredient_name in shopping_list:
         shopping_list[ingredient_name]['quantity'] += ingredient_value
@@ -188,21 +185,24 @@ def write_meal_plan():
                     total_nutrients.update({nutrient: value})
                 else:
                     total_nutrients[nutrient] += value
-        for name, value in total_nutrients.items():
-            file.write(f"\n{name}: {value}")
+        for nutrient in preferences.keys():
+            if nutrient != 'diet':
+                value = total_nutrients.get(nutrient, 0)
+                file.write(f"\n{nutrient}: {value}")
+
         file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
         file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
 
 # Then finds the best recipe in recipes to replace it with
 def improve_meal_plan():
     current_score = get_meal_score()
-    print(f"Trying to Improve Meal Score of {current_score}...")
     if current_score >= 1 - (acceptanceVal + recursion_count[0]* 0.001):
         print("\nTHE MEAL PLAN SATISFIES PREFERENCES!\n")
         return  # meal plan is ready
     else:
         # find the recipe that has the best impact if removed
         # list of all the meals and the score if they were removed. The highest score is the least important
+        print(f"Trying to Improve Meal Score of {current_score}...")
         meal_scores = []
         for name, item in meal_plan.items():   
             meal_score = get_meal_score(name)
@@ -216,13 +216,10 @@ def improve_meal_plan():
                 improve_meal_plan()
                 return
             else:
-                if (i + 1) < len(meal_scores):
-#                    print(f"Replacing {meal_scores[i][0]} can't improve the score. Trying {meal_scores[i + 1][0]}")
-                    pass
-                else:
-                    print("Meal Plan Cannot Be Further Improved")
+                print("Meal Plan Cannot Be Further Improved")
 
 # Plotting function 
+# NOT DONE
 def plot_daily_nutrition():
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     daily_nutrients = {day: {} for day in days}
@@ -262,24 +259,3 @@ if __name__ == "__main__":
     write_shopping_list()
     
     plot_daily_nutrition()
-
-
-"""
-for name, item in meal_plan.items():
-    print(f"{name} has:")
-    for nutrient, value in item.get('nutrition').items():
-        print(f" {nutrient}: {value}")
-
-
-# you can use this to see what the meal plan items look like
-for key, value in meal_plan.items():
-    print(f"Key: {key}")
-    print(f"Value: {value}")
-
-
-for item in meal_plan.values().get('ingredients'):
-    print(item)
-
-# this is an example of how to access nutrition items
-print(f"CALORIES: {preferences.get('calories')}")
-"""
