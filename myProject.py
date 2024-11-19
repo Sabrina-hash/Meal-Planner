@@ -52,7 +52,7 @@ def read_recipes(file_path):
 
 # this function takes recipe info and returns the i value!
 # nutrition is in form of:                                  {'calories': 300, 'protein': 25,...}
-def getImportance(nutrition):
+def getImportance(nutrition, preferences, meal_plan):
     i = 0
     n = 0
     for nutrient in preferences.keys():
@@ -64,7 +64,10 @@ def getImportance(nutrition):
                     progress += item.get('nutrition').get(nutrient, 0)
             n += 1
             i += (1 - abs(progress - goal)/goal)
-    i = round(i/n, 4)
+    if n != 0:
+        i = round(i/n, 4)
+    else:
+        raise ValueError("Tried to divide by 0. n is 0.")
     return i
 
 # Find the best meal that could be added to meal plan from available from recipes. Return its name.
@@ -72,7 +75,7 @@ def find_best():
     best = [0, None]      # i score, name
     for recipe_name, recipe_info in recipes.items():
         nutrition = recipe_info.get('nutrition', {})
-        i = getImportance(nutrition)
+        i = getImportance(nutrition, preferences, meal_plan)
         if i > best[0]:
             best[0] = i
             best[1] = recipe_name
