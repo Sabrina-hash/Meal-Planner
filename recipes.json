@@ -271,7 +271,166 @@
             "calories": 350,
             "protein": 25,
             "carbs": 5,
+            "fat": 30,
+            "vitamins": 50
+        }
+    },
+    "Garlic Butter Chicken": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 200,
+            "olive oil": 20,
+            "garlic": 5,
+            "butter": 50,
+            "parsley": 10
+        },
+        "nutrition": {
+            "calories": 450,
+            "protein": 40,
+            "carbs": 5,
             "fat": 30
         }
+    },
+    "Spinach and Cheese Omelette": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "eggs": 3,
+            "spinach": 100,
+            "cheese": 50,
+            "olive oil": 10
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 22,
+            "carbs": 5,
+            "fat": 25
+        }
+    },
+    "Carrot and Ginger Soup": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "carrots": 200,
+            "olive oil": 15,
+            "garlic": 5,
+            "ginger": 10,
+            "water": 500
+        },
+        "nutrition": {
+            "calories": 200,
+            "protein": 5,
+            "carbs": 30,
+            "fat": 8
+        }
+    },
+    "Bean and Cheese Quesadilla": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "beans": 150,
+            "cheese": 100,
+            "tortilla": 2,
+            "olive oil": 10
+        },
+        "nutrition": {
+            "calories": 400,
+            "protein": 20,
+            "carbs": 45,
+            "fat": 15
+        }
+    },
+    "Tomato and Basil Pasta": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "pasta": 150,
+            "tomato": 100,
+            "basil": 10,
+            "olive oil": 15,
+            "garlic": 5
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 12,
+            "carbs": 60,
+            "fat": 10
+        }
+    },
+    "Chicken and Rice Pilaf": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "chicken": 150,
+            "rice": 200,
+            "carrots": 100,
+            "olive oil": 15,
+            "peas": 100
+        },
+        "nutrition": {
+            "calories": 500,
+            "protein": 30,
+            "carbs": 70,
+            "fat": 15
+        }
+    },
+    "Banana Nut Muffins": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "banana": 2,
+            "oats": 100,
+            "milk": 200,
+            "eggs": 2,
+            "honey": 50,
+            "nuts": 50
+        },
+        "nutrition": {
+            "calories": 300,
+            "protein": 8,
+            "carbs": 45,
+            "fat": 12
+        }
+    },
+    "Cheesy Vegetable Bake": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "mixed vegetables": 200,
+            "cheese": 150,
+            "olive oil": 20,
+            "garlic": 5
+        },
+        "nutrition": {
+            "calories": 400,
+            "protein": 18,
+            "carbs": 25,
+            "fat": 25
+        }
+    },
+    "Egg and Spinach Casserole": {
+        "diet": "non-vegetarian",
+        "ingredients": {
+            "eggs": 4,
+            "spinach": 150,
+            "milk": 100,
+            "olive oil": 10,
+            "cheese": 50
+        },
+        "nutrition": {
+            "calories": 350,
+            "protein": 25,
+            "carbs": 10,
+            "fat": 20
+        }
+    },
+    "Creamy Tomato Soup": {
+        "diet": "vegetarian",
+        "ingredients": {
+            "tomato": 300,
+            "olive oil": 15,
+            "garlic": 5,
+            "cream": 100,
+            "basil": 10
+        },
+        "nutrition": {
+            "calories": 250,
+            "protein": 6,
+            "carbs": 20,
+            "fat": 15
+        }
     }
-}    
+}
