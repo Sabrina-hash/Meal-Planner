@@ -10,7 +10,7 @@ analysis.
 4. Ensure you have 'ingredients.csv', 'recipies.json', and 'preferences.json' in the
 project directory
 5. Run the main script:
-python myProject.py
+`python myProject.py`
 ## Running Tests
 To run the unit tests:
 `python -m unittest unit_test.test_myProject`
