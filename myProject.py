@@ -175,23 +175,19 @@ def generate_shopping_list():
             if shopping_list[ingredient_name]['quantity'] <= 0:
                 shopping_list.pop(ingredient_name)
 
-# writes the information from shopping_list into shopping_list.txt
-def write_shopping_list():
-    with open('shopping_list.txt', "w") as file:
-        file.write("Shopping List for the Week\n")
-        for name, value in shopping_list.items():
-            file.write(f"\n{name}: {value.get('quantity')} {value.get('unit')}")
+
 
 # Creates meal_plan.txt and writes helpful information into it.
-def write_meal_plan(preferences, meal_plan):
+def write_meal_plan(preferences, meal_plan, shopping_list):
     try:
-        with open('meal_plan.txt', "w") as file:
+        generate_shopping_list()
+        with open('plan.txt', "w") as file:
             file.write("The Meals: ")
             for meal in meal_plan.keys():
                 file.write(f"{meal}, ")
             file.write(f"\n\nThe Meal Score: {get_meal_score(preferences, meal_plan)}")
             file.write(f"\n\nNutritional Values:")
-            total_nutrients = {}        # stores total 
+            total_nutrients = {}        # stores total
             for name, item in meal_plan.items():
                 for nutrient, value in item.get('nutrition').items():
                     if nutrient not in total_nutrients.keys():
@@ -202,12 +198,16 @@ def write_meal_plan(preferences, meal_plan):
                 if nutrient != 'diet':
                     value = total_nutrients.get(nutrient, 0)
                     file.write(f"\n{nutrient}: {value}")
-
             file.write(f"\n\nRecipe Pool Size: {len(meal_plan) + len(recipes)}\nRecipes Used: {len(meal_plan)}\nRecipes Not Used: {len(recipes)}")
             file.write(f"\n\nRecursive Iteration Count: {recursion_count[0]}")
+            file.write(f"\n\n----------------------------------\n")
+            file.write(f"\n\nShopping List for the Week\n")
+            for name, value in shopping_list.items():
+                file.write(f"\n{name}: {value.get('quantity')} {value.get('unit')}")
     except Exception as e:
         print(f"Error writing meal plan: {e}")
         return False
+
 
 # Recursively runs until the meal score satisfies our needs, or we can't improve any further.
 # Each iteration must improve meal score
@@ -280,9 +280,10 @@ if __name__ == "__main__":
     initialize_meal_plan(recipes, preferences, meal_plan)
     improve_meal_plan(recipes, preferences, meal_plan)
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
-    write_meal_plan(preferences, meal_plan)
-
     generate_shopping_list()
-    write_shopping_list()
+    write_meal_plan(preferences, meal_plan,shopping_list)
+
+
     
     plot_daily_nutrition(preferences, meal_plan)
+
