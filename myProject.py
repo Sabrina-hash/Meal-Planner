@@ -181,7 +181,7 @@ def generate_shopping_list():
 def write_meal_plan(preferences, meal_plan, shopping_list):
     try:
         generate_shopping_list()
-        with open('plan.txt', "w") as file:
+        with open('meal_plan.txt', "w") as file:
             file.write("The Meals: ")
             for meal in meal_plan.keys():
                 file.write(f"{meal}, ")
