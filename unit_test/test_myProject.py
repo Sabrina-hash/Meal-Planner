@@ -67,8 +67,6 @@ class TestMealPlanner(unittest.TestCase):
     def test_write_meal_plan(self):
         pass
 
-    def test_write_shopping_list(self):
-        pass
 
 if __name__ == '__main__':
     unittest.main()
