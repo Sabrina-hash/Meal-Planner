@@ -181,10 +181,12 @@ def generate_shopping_list():
 def write_meal_plan(preferences, meal_plan, shopping_list):
     try:
         generate_shopping_list()
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
         with open('meal_plan.txt', "w") as file:
-            file.write("The Meals: ")
-            for meal in meal_plan.keys():
-                file.write(f"{meal}, ")
+            file.write("The Meals:\n\n")
+            for day, (meal_name, meal_details) in zip(days, meal_plan.items()):
+                file.write(f"{day}: {meal_name}\n")
             file.write(f"\n\nThe Meal Score: {get_meal_score(preferences, meal_plan)}")
             file.write(f"\n\nNutritional Values:")
             total_nutrients = {}        # stores total
@@ -280,7 +282,6 @@ if __name__ == "__main__":
     initialize_meal_plan(recipes, preferences, meal_plan)
     improve_meal_plan(recipes, preferences, meal_plan)
     print(f"This algorithm took {recursion_count[0]} iterations to complete!")
-    generate_shopping_list()
     write_meal_plan(preferences, meal_plan,shopping_list)
 
 
