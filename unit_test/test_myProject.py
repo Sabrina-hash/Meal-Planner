@@ -1,4 +1,4 @@
-# python -m unittest unit_tests.test_myProject
+# python -m unittest unit_test.test_myProject
 
 import unittest
 import myProject
@@ -80,10 +80,10 @@ class TestMealPlanner(unittest.TestCase):
         }
 
         myProject.write_meal_plan(preferences, meal_plan, shopping_list)
-        with open('plan.txt', 'r') as file:
+        with open('meal_plan.txt', 'r') as file:
             file_contents = file.read()
             self.assertTrue('The Meals:' in file_contents)
-        os.remove('plan.txt')
+        os.remove('meal_plan.txt')
 
 
 if __name__ == '__main__':
