@@ -2,6 +2,7 @@
 
 import unittest
 import myProject
+import os
 
 
 class TestMealPlanner(unittest.TestCase):
@@ -65,8 +66,26 @@ class TestMealPlanner(unittest.TestCase):
         self.assertEqual(myProject.read_ingredients('ingredients.csv'), True)
 
     def test_write_meal_plan(self):
-        pass
+        preferences = {'calories': 200, 'protein': 50, 'diet': 'non-vegetarian'}
+        meal_plan = {
+            'Chicken Salad': {
+                'diet': 'non-vegetarian',
+                'ingredients': {'chicken': 150, 'lettuce': 50},
+                'nutrition': {'calories': 120, 'protein': 30}
+            }
+        }
+        shopping_list = {
+            'chicken': {'quantity': 150, 'unit': 'grams'},
+            'lettuce': {'quantity': 50, 'unit': 'grams'}
+        }
+
+        myProject.write_meal_plan(preferences, meal_plan, shopping_list)
+        with open('plan.txt', 'r') as file:
+            file_contents = file.read()
+            self.assertTrue('The Meals:' in file_contents)
+        os.remove('plan.txt')
 
 
 if __name__ == '__main__':
     unittest.main()
+
